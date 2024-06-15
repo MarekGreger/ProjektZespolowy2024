@@ -3,9 +3,26 @@
  * https://jestjs.io/docs/configuration
  */
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+// const tsJest = require("ts-jest/presets/default-esm/jest-preset")
+// import tsJest from "ts-jest/presets/default-esm/jest-preset.js"
 /** @type {import('jest').Config} */
 const config = {
-  preset: "ts-jest",
+  preset: "ts-jest/presets/default-esm",
+  transform: {
+    "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+            useESM: true,
+            tsconfig: {
+                module: "ES2022",
+                target: "ES2017"
+            }
+        }
+    ]
+  },
+  silent: true,
+  extensionsToTreatAsEsm: [".ts"],
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -175,7 +192,18 @@ const config = {
   // testRunner: "jest-circus/runner",
 
   // A map from regular expressions to paths to transformers
-  // transform: undefined,
+  // transform: {
+  //   "^.+\\.tsx?$": [
+  //     {
+  //       useESM: true,
+  //       tsconfig: {
+  //         module: "ES2022",
+  //         target: "ES2017"
+  //       }
+  //     }
+  //   ]
+  // },
+  // extensionsToTreatAsEsm: [".ts"]
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [
@@ -196,4 +224,4 @@ const config = {
   // watchman: true,
 };
 
-module.exports = config;
+export default config;
