@@ -6,6 +6,7 @@ import {
     Drawer,
     IconButton,
     List,
+    Stack,
     Theme,
     Toolbar,
     Typography,
@@ -24,8 +25,9 @@ import { useSessionStorage } from "../../hooks/useSessionStorage";
 interface Props extends PropsWithChildren {
     pageTitle?: string;
     subpageTitle: string;
+    center?: boolean;
 }
-const CommonLayout: React.FC<Props> = ({ children, pageTitle = "MOXLY", subpageTitle }) => {
+const CommonLayout: React.FC<Props> = ({ children, pageTitle = "MOXLY", subpageTitle, center = false }) => {
     const isDesktop = useMediaQuery((t: Theme) => t.breakpoints.up("md"));
     const [_isDrawerOpen, setDrawerOpen] = useSessionStorage<"true" | "false">(
         "isDrawerOpen",
@@ -81,21 +83,43 @@ const CommonLayout: React.FC<Props> = ({ children, pageTitle = "MOXLY", subpageT
                 </Toolbar>
                 <Divider />
                 <List disablePadding>
-                    <NavigationListItem href="/panel/auta" minimalRole="pracownik">Auta</NavigationListItem>
-                    <NavigationListItem href="/panel/grafik" minimalRole="kierownik">Grafik</NavigationListItem>
-                    <NavigationListItem href="/panel/klienci" minimalRole="kierownik">Klienci</NavigationListItem>
-                    <NavigationListItem href="/panel/modele" minimalRole="kierownik">Modele</NavigationListItem>
-                    <NavigationListItem href="/panel/pracownicy" minimalRole="kierownik">Pracownicy</NavigationListItem>
-                    <NavigationListItem href="/panel/umowy" minimalRole="kierownik">Umowy</NavigationListItem>
-                    <NavigationListItem href="/panel/uslugi" minimalRole="klient">Usługi</NavigationListItem>
-                    <NavigationListItem href="/panel/zgloszenia" minimalRole="pracownik">Zgłoszenia</NavigationListItem>
-                    <NavigationListItem href="/panel/uprawnienia" minimalRole="admin">Uprawnienia</NavigationListItem>
+                    <NavigationListItem href="/panel/auta" minimalRole="pracownik">
+                        Auta
+                    </NavigationListItem>
+                    <NavigationListItem href="/panel/grafik" minimalRole="kierownik">
+                        Grafik
+                    </NavigationListItem>
+                    <NavigationListItem href="/panel/klienci" minimalRole="kierownik">
+                        Klienci
+                    </NavigationListItem>
+                    <NavigationListItem href="/panel/modele" minimalRole="kierownik">
+                        Modele
+                    </NavigationListItem>
+                    <NavigationListItem href="/panel/pracownicy" minimalRole="kierownik">
+                        Pracownicy
+                    </NavigationListItem>
+                    <NavigationListItem href="/panel/umowy" minimalRole="kierownik">
+                        Umowy
+                    </NavigationListItem>
+                    <NavigationListItem href="/panel/uslugi" minimalRole="klient">
+                        Usługi
+                    </NavigationListItem>
+                    <NavigationListItem href="/panel/zgloszenia" minimalRole="pracownik">
+                        Zgłoszenia
+                    </NavigationListItem>
+                    <NavigationListItem href="/panel/uprawnienia" minimalRole="admin">
+                        Uprawnienia
+                    </NavigationListItem>
                 </List>
             </Drawer>
             <Box component="main" sx={[{ p: 2 }, contentMovedByDrawer(isDrawerOpen && isDesktop)]}>
-                <Typography variant="h5" component="h2" sx={{ pb: 2 }}>
-                    {subpageTitle}
-                </Typography>
+                <Stack alignItems={center ? "center" : "start"} gap={3}>
+                    <Stack direction="row" gap={2} sx={{ width: "100%", maxWidth: 800, pb: 2 }}>
+                        <Typography variant="h5" component="h2">
+                            {subpageTitle}
+                        </Typography>
+                    </Stack>
+                </Stack>
                 {children}
             </Box>
         </>

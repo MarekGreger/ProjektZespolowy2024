@@ -50,10 +50,6 @@ app.get('/Auto_pracownik/auto/:id', authenticate, authorize((user) => roleGreate
             [idAuto]
         );
 
-        if (results.length === 0) {
-            return res.status(200).send(`Nie znaleziono pracowników dla auta o ID: ${idAuto}`);
-        }
-
         return res.json(results);
     } catch (error) {
         console.error(error);
@@ -70,10 +66,6 @@ app.get('/Auto_pracownik/pracownik/:id', authenticate, authorize((user) => roleG
             "SELECT AP.Auto_IdAuto, AP.Pracownik_IdPracownik, A.Rejestracja, A.Model_IdModel FROM Auto_Pracownik AP LEFT JOIN Auto A ON AP.Auto_IdAuto = A.IdAuto WHERE AP.Pracownik_IdPracownik = ?",
             [idPracownik]
         );
-
-        if (results.length === 0) {
-            return res.status(200).send(`Nie znaleziono aut przypisanych do pracownika o ID: ${idPracownik}`);
-        }
 
         return res.json(results);
     } catch (error) {

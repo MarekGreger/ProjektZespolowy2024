@@ -59,7 +59,7 @@ app.get('/Umowa/:id', authenticate, authorize((user) => roleGreaterOrEqual(user[
         U.Data_rozpoczecia,
         U.Data_zakonczenia
     FROM db_main.Umowa U LEFT JOIN db_main.Klient K ON U.Klient_IdKlient = K.IdKlient
-    JOIN db_main.Wersja_umowy WU ON U.IdUmowa = WU.Umowa_IdUmowa
+    LEFT JOIN db_main.Wersja_umowy WU ON U.IdUmowa = WU.Umowa_IdUmowa
     LEFT JOIN db_main.Usluga UU ON WU.Usluga_IdUsluga = UU.IdUsluga 
     WHERE U.IdUmowa = ?`, [umowaId]);
    try {
@@ -120,7 +120,7 @@ app.patch(
     "/Umowa/:id",
     authenticate,
     authorize((user) => roleGreaterOrEqual(user["role"], "admin")),
-    validateBody(umowaSchema.partial()), 
+    validateBody(umowaSchema.innerType().partial()), 
     async (req: Request, res: Response) => {
         const umowaId = req.params["id"];
         const umowaData = req.body as Partial<UmowaPayload>; 

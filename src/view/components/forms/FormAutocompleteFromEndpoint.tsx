@@ -5,7 +5,7 @@ interface Props<T> {
     name: string;
     label: string;
     endpoint: Endpoint;
-    getOptionId: (option: T | null) => string | number;
+    getOptionId: (option: T | null) => string | number | null;
     getOptionLabel: (option: T) => string;
 }
 const FormAutocompleteFromEndpoint = <T,>({
@@ -22,8 +22,10 @@ const FormAutocompleteFromEndpoint = <T,>({
             name={name}
             loading={isLoading}
             options={data ?? []}
-            isOptionEqualToValue={(option, value) => getOptionId(option) === getOptionId(value)}
-            getOptionLabel={getOptionLabel}
+            isOptionEqualToValue={(option, value) =>
+                getOptionId(option) === getOptionId(value) || getOptionId(option) === value
+            }
+            getOptionLabel={(option) => (option ? getOptionLabel(option) : "")}
             optionToValue={getOptionId}
         />
     );

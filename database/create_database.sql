@@ -19,6 +19,7 @@ drop schema if exists db_main;
 -- Schema db_main
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `db_main` DEFAULT CHARACTER SET utf8mb3 ;
+SET NAMES utf8 COLLATE utf8_unicode_ci;
 USE `db_main` ;
 
 -- -----------------------------------------------------

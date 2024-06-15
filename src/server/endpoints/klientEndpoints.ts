@@ -67,7 +67,7 @@ app.get('/Klient/:id', authenticate, authorize((user) => roleGreaterOrEqual(user
    }
 });
 
-app.get('/Klient/:email', authenticate, async (req: Request, res: Response) => {                           //tylko swoje dane
+app.get('/profil/Klient/:email', authenticate, async (req: Request, res: Response) => {                           //tylko swoje dane
     const emailParam = req.params["email"];
 
     if (!emailParam) {
@@ -103,33 +103,8 @@ app.get('/Klient/:email', authenticate, async (req: Request, res: Response) => {
     }
 });
 
-app.get('/Klient/:email/auto', authenticate, async (req: Request, res: Response) => {
-    const emailParam = req.params["email"];
-
-    if (!emailParam) {
-        return res.status(400).send("Email jest wymagany");
-    }
-
-    const email = decodeURIComponent(emailParam);
-    const user = getUserData(res);
-
-    if (!user || !user.email) {
-        return res.status(403).send("Brak uprawnień lub błąd autentykacji");
-    }
-
-    if (user.email !== email) {
-        return res.status(403).send("Brak uprawnień do przeglądania aut");
-    }
-
+const getClientCars = async (id: string | undefined, res: Response) => {
     try {
-        const [klientResults] = await connection.query<RowDataPacket[]>("SELECT IdKlient FROM Klient WHERE Email = ?", [email]);
-
-        if (klientResults.length === 0 || !klientResults[0]) {
-            return res.status(404).send('Klient o podanym emailu nie został znaleziony');
-        }
-
-        const klientID = klientResults[0]['IdKlient'];
-
         const [autoResults] = await connection.query<RowDataPacket[]>(
            `WITH A AS (
             SELECT A.IdAuto AS IdAuto,
@@ -167,7 +142,7 @@ app.get('/Klient/:email/auto', authenticate, async (req: Request, res: Response)
         LEFT JOIN db_main.Auto_Usluga AU ON A.IdAuto = AU.Auto_IdAuto
         LEFT JOIN db_main.Usluga U ON AU.Usluga_IdUsluga = U.IdUsluga
         WHERE A.IdKlient = ?
-        GROUP BY A.IdAuto, A.IdKlient;`, [klientID, klientID]
+        GROUP BY A.IdAuto, A.IdKlient;`, [id, id]
         );
 
         return res.json(autoResults);
@@ -175,9 +150,68 @@ app.get('/Klient/:email/auto', authenticate, async (req: Request, res: Response)
         console.error(error);
         return res.status(500).send('Wystąpił błąd podczas pobierania aut');
     }
+}
+
+app.get('/Klient/:id/auto', authenticate, authorize("kierownik"), (req, res) => getClientCars(req.params["id"], res))
+
+app.get('/profil/Klient/:email/auto', authenticate, async (req: Request, res: Response) => {
+    const emailParam = req.params["email"];
+
+    if (!emailParam) {
+        return res.status(400).send("Email jest wymagany");
+    }
+
+    const email = decodeURIComponent(emailParam);
+    const user = getUserData(res);
+
+    if (!user || !user.email) {
+        return res.status(403).send("Brak uprawnień lub błąd autentykacji");
+    }
+
+    if (user.email !== email) {
+        return res.status(403).send("Brak uprawnień do przeglądania aut");
+    }
+
+    try {
+        const [klientResults] = await connection.query<RowDataPacket[]>("SELECT IdKlient FROM Klient WHERE Email = ?", [email]);
+
+        if (klientResults.length === 0 || !klientResults[0]) {
+            return res.status(404).send('Klient o podanym emailu nie został znaleziony');
+        }
+
+        const klientID = klientResults[0]['IdKlient'];
+        return await getClientCars(klientID, res); 
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Wystąpił błąd podczas pobierania aut');
+    }
+
+    
 });
 
-app.get('/Klient/:email/umowa', authenticate, async (req: Request, res: Response) => {
+const getClientContracts = async (id: string | undefined, res: Response) => {
+    try {
+        const [autoResults] = await connection.query<RowDataPacket[]>(`
+        SELECT 
+            U.IdUmowa,
+            U.Klient_IdKlient, 
+            K.Nazwa,
+            U.Data_rozpoczecia,
+            U.Data_zakonczenia
+        FROM db_main.Umowa U LEFT JOIN db_main.Klient K ON U.Klient_IdKlient = K.IdKlient
+        WHERE U.Klient_IdKlient = ?;`, [id]
+        );
+
+        return res.json(autoResults);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Wystąpił błąd podczas pobierania danych umów klienta');
+    }
+}
+
+app.get('/Klient/:id/umowa', authenticate, authorize("kierownik"), (req, res) => getClientContracts(req.params["id"], res))
+
+app.get('/profil/Klient/:email/umowa', authenticate, async (req: Request, res: Response) => {
     const emailParam = req.params["email"];
 
     if (!emailParam) {
@@ -203,19 +237,7 @@ app.get('/Klient/:email/umowa', authenticate, async (req: Request, res: Response
         }
 
         const klientID = klientResults[0]['IdKlient'];
-
-        const [autoResults] = await connection.query<RowDataPacket[]>(`
-        SELECT 
-            U.IdUmowa,
-            U.Klient_IdKlient, 
-            K.Nazwa,
-            U.Data_rozpoczecia,
-            U.Data_zakonczenia
-        FROM db_main.Umowa U LEFT JOIN db_main.Klient K ON U.Klient_IdKlient = K.IdKlient
-        WHERE U.Klient_IdKlient = ?;`, [klientID]
-        );
-
-        return res.json(autoResults);
+        return await getClientContracts(klientID, res);
     } catch (error) {
         console.error(error);
         return res.status(500).send('Wystąpił błąd podczas pobierania danych umów klienta');

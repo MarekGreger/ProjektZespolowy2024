@@ -29,6 +29,16 @@ const theme = createTheme(
         dimensions: {
             drawerWidth: "230px",
         },
+        components: {
+            MuiLink: {
+                defaultProps: {
+                    color: "#0000FF",
+                },
+                styleOverrides: {
+                    root: "cursor: pointer",
+                },
+            },
+        },
     },
     plPL,
     gridPlPL

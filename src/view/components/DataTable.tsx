@@ -69,5 +69,9 @@ export const EditableColumnHeader: React.FC<GridColumnHeaderParams<any>> = ({
 
 export const DateTimeFormatToView = "DD-MM-YYYY HH:mm";
 export const DateFormatToView = "DD-MM-YYYY";
+export const zlotyFormatter = new Intl.NumberFormat("pl-PL", {
+    style: "currency",
+    currency: "PLN",
+});
 
 export default DataTable;

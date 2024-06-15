@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import CommonLayout from "../layout/CommonLayout";
-import AddFormButton from "../layout/AddFormButton";
+import FormButton from "../layout/FormButton";
 import { deleteFromEndpoint, patchEndpoint, postToEndpoint } from "../../backendAccess";
 import { Model, modelSchema } from "../../../common/modelSchema";
 import FormTextField from "../forms/FormTextField";
@@ -14,7 +14,7 @@ const Modele: React.FC<Props> = () => {
         <CommonLayout subpageTitle="Modele">
             <Stack alignItems={"normal"} gap={2}>
                 <div>
-                    <AddFormButton
+                    <FormButton
                         minimalRole="kierownik"
                         onSubmit={postToEndpoint("/Model")}
                         schema={modelSchema}
@@ -22,7 +22,7 @@ const Modele: React.FC<Props> = () => {
                     >
                         <FormTextField name="Marka" label="Marka" />
                         <FormTextField name="Model" label="Model" />
-                    </AddFormButton>
+                    </FormButton>
                 </div>
                 <DataTable<Model>
                     dataEndpoint="/Model"

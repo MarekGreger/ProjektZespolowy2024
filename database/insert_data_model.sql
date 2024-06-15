@@ -1264,5 +1264,4 @@ VALUES
 ('Toyota', 'RAV4 Prime'),
 ('Volkswagen', 'Atlas Cross Sport'),
 ('GMC', 'Hummer EV'),
-('Jeep', 'Grand Wagoneer'),
-;
+('Jeep', 'Grand Wagoneer');

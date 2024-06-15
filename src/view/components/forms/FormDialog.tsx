@@ -13,7 +13,7 @@ interface Props<T> extends PropsWithChildren {
     title: string;
     schema: ZodType<T>;
     onSubmit: Consumer<T>;
-    defaultValues?: DefaultValues<T>
+    defaultValues?: DefaultValues<T>;
 }
 const FormDialog = <T extends FieldValues>({
     onClose,
@@ -22,11 +22,14 @@ const FormDialog = <T extends FieldValues>({
     title,
     children,
     schema,
-    defaultValues
+    defaultValues,
 }: Props<T>) => {
     const titleId = useId();
-    const { handleSubmit, control } = useForm<T>({ resolver: zodResolver(schema), mode: "onBlur", defaultValues });
-
+    const { handleSubmit, control } = useForm<T>({
+        resolver: zodResolver(schema),
+        mode: "onChange",
+        defaultValues,
+    });
     const formSubmit = handleSubmit((data) => {
         onSubmit(data);
         onClose();
@@ -47,9 +50,15 @@ const FormDialog = <T extends FieldValues>({
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         <formContext.Provider value={control as any}>
                             {children}
+                            {/* <FormErrors /> */}
                         </formContext.Provider>
                     </Stack>
-                    <Button type="submit" variant="contained" fullWidth>
+                    <Button
+                        // disabled={!formState.isValid}
+                        type="submit"
+                        variant="contained"
+                        fullWidth
+                    >
                         Zapisz
                     </Button>
                 </form>

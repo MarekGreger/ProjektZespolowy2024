@@ -10,7 +10,7 @@ import { roleGreaterOrEqual } from "../../common/userRoles";
 app.post(
     "/Usluga",
     authenticate,
-    authorize((user) => roleGreaterOrEqual(user["role"], "kierownik")),
+    authorize("kierownik"),
     validateBody(uslugaSchema),
     async (req: Request, res: Response) => {
         const uslugaData = req.body as UslugaPayload;
@@ -29,7 +29,7 @@ app.post(
     }
 );
 
-app.get('/Usluga', authenticate, authorize((user) => roleGreaterOrEqual(user["role"], "pracownik")), async (req: Request, res: Response) => {
+app.get('/Usluga', authenticate, authorize("klient"), async (req: Request, res: Response) => {
     try {
         const [results] = await connection.query<RowDataPacket[]>("SELECT * FROM Usluga");
         return res.json(results);
@@ -39,7 +39,7 @@ app.get('/Usluga', authenticate, authorize((user) => roleGreaterOrEqual(user["ro
     }
 });
 
-app.get('/Usluga/:id', authenticate, authorize((user) => roleGreaterOrEqual(user["role"], "pracownik")), async (req: Request, res: Response) => {
+app.get('/Usluga/:id', authenticate, authorize("klient"), async (req: Request, res: Response) => {
     const uslugaId = req.params["id"];
 
     const [results] = await connection.query<RowDataPacket[]>("SELECT * FROM Usluga WHERE IdUsluga = ?", [uslugaId]);
@@ -55,7 +55,7 @@ app.get('/Usluga/:id', authenticate, authorize((user) => roleGreaterOrEqual(user
    }
 });
 
-app.delete('/Usluga/:id', authenticate, authorize((user) => roleGreaterOrEqual(user["role"], "admin")), async (req: Request, res: Response) => {
+app.delete('/Usluga/:id', authenticate, authorize("admin"), async (req: Request, res: Response) => {
     const uslugaId = req.params["id"];
 
     const [results] = await connection.query<ResultSetHeader>("DELETE FROM Usluga WHERE IdUsluga = ?", [uslugaId]);
@@ -74,7 +74,7 @@ app.delete('/Usluga/:id', authenticate, authorize((user) => roleGreaterOrEqual(u
 app.patch(
     "/Usluga/:id",
     authenticate,
-    authorize((user) => roleGreaterOrEqual(user["role"], "kierownik")),
+    authorize("kierownik"),
     validateBody(uslugaSchema.partial()), 
     async (req: Request, res: Response) => {
         const uslugaId = req.params["id"];
