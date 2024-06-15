@@ -26,9 +26,14 @@ export type AutoPayload = z.infer<typeof autoSchema>;
 export type Auto = {
     IdAuto: number,
     Model_IdModel: number,
+    Marka: string,
+    Model: string,
     Klient_IdKlient: number,
+    Klient_nazwa: string,
     Rejestracja: string,
     Czas_rozpoczecia: string,
     Czas_zakonczenia: string,
-    Dodatkowe_informacje: string
+    Dodatkowe_informacje: string,
+    Pracownicy: string,
+    Uslugi: string
 }

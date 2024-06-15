@@ -56,10 +56,11 @@ const Auta: React.FC = () => {
                     dataEndpoint={"/Auto"}
                     getRowId={(row) => row.IdAuto}
                     schema={[
-                        { field: "Rejestracja", flex: 1 },
+                        { field: "Rejestracja", flex: 1, minWidth: 100 },
                         {
                             field: "Czas_rozpoczecia",
                             flex: 1,
+                            minWidth: 150,
                             headerName: "Czas rozpoczęcia",
                             type: "dateTime",
                             valueGetter: (row) =>
@@ -69,6 +70,7 @@ const Auta: React.FC = () => {
                         {
                             field: "Czas_zakonczenia",
                             flex: 1,
+                            minWidth: 150,
                             headerName: "Czas zakończenia",
                             type: "dateTime",
                             
@@ -80,6 +82,7 @@ const Auta: React.FC = () => {
                             field: "Dodatkowe_informacje",
                             flex: 1,
                             headerName: "Dodatkowe informacje",
+                            minWidth: 300,
                         },
                     ]}
                 />

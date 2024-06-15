@@ -54,7 +54,7 @@ app.get('/Umowa/:id', authenticate, authorize((user) => roleGreaterOrEqual(user[
         U.Klient_IdKlient,
         UU.IdUsluga,
         K.Nazwa,
-        UU.Nazwa_uslugi,
+        UU.Nazwa,
         WU.Cena,
         U.Data_rozpoczecia,
         U.Data_zakonczenia

@@ -49,7 +49,7 @@ app.get(
         FROM db_main.Zgloszenie Z 
         LEFT JOIN db_main.Klient K ON Z.Klient_IdKlient = K.IdKlient
         LEFT JOIN db_main.Pracownik P ON Z.Pracownik_IdPracownik = P.IdPracownik
-        WHERE Z.Pracownik_IdPracownik = ?`, [zgloszenieID]
+        WHERE Z.IdZgloszenie = ?`, [zgloszenieID]
     );
         try {
             console.log(results);
@@ -129,7 +129,7 @@ app.patch(
 
         if(user &&user['role'] === "pracownik")
         {
-            const [zgloszenieResult] = await connection.query<RowDataPacket[]>("SELECT Status FROM Klient WHERE IdZgloszenie = ? AND Status <> 'zaakceptowane'", [zgloszenieId]);
+            const [zgloszenieResult] = await connection.query<RowDataPacket[]>("SELECT Status FROM Zgloszenie WHERE IdZgloszenie = ? AND Status <> 'zaakceptowane'", [zgloszenieId]);
 
             if (zgloszenieResult.length === 0 || !zgloszenieResult[0]) {
                 return res.status(404).send('Pracownik nie może modyfikować zaakceptowanych zgłoszeń');
