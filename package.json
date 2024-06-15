@@ -1,0 +1,48 @@
+{
+  "name": "zpi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/backend/index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "parcel build",
+    "dev": "concurrently \"parcel watch\" \"nodemon dist/backend/index.js\"",
+    "start": "node dist/backend/index.js"
+  },
+  "targets": {
+    "frontend": {
+      "source": "./view/index.html",
+      "context": "browser"
+    },
+    "backend": {
+      "source": "./server/index.ts",
+      "context": "node"
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.20",
+    "@types/react": "^18.2.29",
+    "@types/react-dom": "^18.2.14",
+    "@types/supertest": "^2.0.15",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-react": "^7.33.2",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.1",
+    "parcel": "^2.10.0",
+    "process": "^0.11.10",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
