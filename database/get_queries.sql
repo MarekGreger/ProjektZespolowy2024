@@ -122,7 +122,44 @@ FROM db_main.Model M;
 
 
 -- Auta
--- Pobieranie wszystkich aut
+-- Pobranie danych aut
+WITH A AS (
+    SELECT A.IdAuto AS IdAuto,
+        A.Klient_IdKlient AS IdKlient,
+        A.Model_IdModel AS IdModel,
+        A.Rejestracja AS Rejestracja,
+        M.Marka AS Marka, 
+        M.Model AS Model,
+        A.Czas_rozpoczecia AS Czas_rozpoczecia,
+        A.Czas_zakonczenia AS Czas_zakonczenia,
+        K.Nazwa AS Klient_nazwa,
+        GROUP_CONCAT(P.Imie, ' ', P.Nazwisko SEPARATOR ', ') AS Pracownicy,
+        A.Dodatkowe_informacje AS Dodatkowe_informacje
+    FROM db_main.Auto A LEFT JOIN db_main.Klient K ON A.Klient_IdKlient = K.IdKlient
+        LEFT JOIN db_main.Model M ON A.Model_IdModel = M.IdModel
+        LEFT JOIN db_main.Auto_Pracownik AP ON A.IdAuto = AP.Auto_IdAuto
+        LEFT JOIN db_main.Pracownik P ON AP.Pracownik_IdPracownik = P.IdPracownik
+    GROUP BY A.IdAuto, A.Klient_IdKlient
+)
+SELECT DISTINCT A.IdAuto,
+    A.IdKlient,
+    A.IdModel,
+    A.Rejestracja,
+    A.Marka, 
+    A.Model,
+    A.Czas_rozpoczecia,
+    IFNULL(A.Czas_zakonczenia, 'W trakcie') AS Czas_zakonczenia,
+    A.Klient_nazwa,
+    A.Pracownicy,
+    A.Dodatkowe_informacje,
+    GROUP_CONCAT(U.Nazwa SEPARATOR ', ') AS Uslugi
+FROM A
+    LEFT JOIN db_main.Auto_Usluga AU ON A.IdAuto = AU.Auto_IdAuto
+    LEFT JOIN db_main.Usluga U ON AU.Usluga_IdUsluga = U.IdUsluga
+GROUP BY
+    A.IdAuto, A.IdKlient;
+
+-- Pobieranie wszystkich aut wersja z ceną
 WITH A AS (
     SELECT A.IdAuto AS IdAuto,
         A.Klient_IdKlient AS IdKlient,
@@ -175,7 +212,8 @@ WITH A AS (
         A.Czas_rozpoczecia AS Czas_rozpoczecia,
         IFNULL(A.Czas_zakonczenia, 'W trakcie') AS Czas_zakonczenia,
         K.Nazwa AS Klient_nazwa,
-
+        GROUP_CONCAT(P.Imie, ' ', P.Nazwisko SEPARATOR ', ') AS Pracownicy,
+        A.Dodatkowe_informacje AS Dodatkowe_informacje
     FROM db_main.Auto A LEFT JOIN db_main.Klient K ON A.Klient_IdKlient = K.IdKlient
         LEFT JOIN db_main.Model M ON A.Model_IdModel = M.IdModel
         LEFT JOIN db_main.Auto_Pracownik AP ON A.IdAuto = AP.Auto_IdAuto

@@ -105,6 +105,7 @@ app.patch(
     async (req: Request, res: Response) => {
         const grafikId = req.params["id"];
         const grafikData = req.body as Partial<GrafikPayload>; 
+        grafikData.Status = "przesłane";
 
         const updates = [];
         const values = [];

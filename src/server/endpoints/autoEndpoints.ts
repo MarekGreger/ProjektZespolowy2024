@@ -45,10 +45,10 @@ app.get('/Auto',authenticate, authorize((user) => roleGreaterOrEqual(user["role"
                 GROUP_CONCAT(P.Imie, ' ', P.Nazwisko SEPARATOR ', ') AS Pracownicy,
                 A.Dodatkowe_informacje AS Dodatkowe_informacje
             FROM db_main.Auto A 
-            LEFT JOIN db_main.Klient K ON A.Klient_IdKlient = K.IdKlient
-            LEFT JOIN db_main.Model M ON A.Model_IdModel = M.IdModel
-            LEFT JOIN db_main.Auto_Pracownik AP ON A.IdAuto = AP.Auto_IdAuto
-            LEFT JOIN db_main.Pracownik P ON AP.Pracownik_IdPracownik = P.IdPracownik
+                LEFT JOIN db_main.Klient K ON A.Klient_IdKlient = K.IdKlient
+                LEFT JOIN db_main.Model M ON A.Model_IdModel = M.IdModel
+                LEFT JOIN db_main.Auto_Pracownik AP ON A.IdAuto = AP.Auto_IdAuto
+                LEFT JOIN db_main.Pracownik P ON AP.Pracownik_IdPracownik = P.IdPracownik
             GROUP BY A.IdAuto, A.Klient_IdKlient
         )
         SELECT DISTINCT A.IdAuto,
@@ -62,15 +62,10 @@ app.get('/Auto',authenticate, authorize((user) => roleGreaterOrEqual(user["role"
             A.Klient_nazwa,
             A.Pracownicy,
             A.Dodatkowe_informacje,
-            GROUP_CONCAT(U.Nazwa SEPARATOR ', ') AS Uslugi,
-            IFNULL(SUM(WU.Cena), 0) AS Cena
+            GROUP_CONCAT(U.Nazwa SEPARATOR ', ') AS Uslugi
         FROM A
             LEFT JOIN db_main.Auto_Usluga AU ON A.IdAuto = AU.Auto_IdAuto
             LEFT JOIN db_main.Usluga U ON AU.Usluga_IdUsluga = U.IdUsluga
-            LEFT JOIN db_main.Wersja_umowy WU ON U.IdUsluga = WU.Usluga_IdUsluga
-            LEFT JOIN db_main.Umowa UM ON WU.Umowa_IdUmowa = UM.IdUmowa
-        WHERE (UM.Klient_IdKlient = A.IdKlient AND A.Czas_zakonczenia BETWEEN UM.Data_rozpoczecia AND UM.Data_zakonczenia)
-            OR (A.Czas_zakonczenia IS NULL AND A.Czas_rozpoczecia BETWEEN UM.Data_rozpoczecia AND UM.Data_zakonczenia AND UM.Klient_IdKlient = A.IdKlient)
         GROUP BY A.IdAuto, A.IdKlient;
     `);
         return res.json(results);
@@ -97,10 +92,10 @@ app.get('/Auto/:id',authenticate, authorize((user) => roleGreaterOrEqual(user["r
             GROUP_CONCAT(P.Imie, ' ', P.Nazwisko SEPARATOR ', ') AS Pracownicy,
             A.Dodatkowe_informacje AS Dodatkowe_informacje
         FROM db_main.Auto A 
-        LEFT JOIN db_main.Klient K ON A.Klient_IdKlient = K.IdKlient
-        LEFT JOIN db_main.Model M ON A.Model_IdModel = M.IdModel
-        LEFT JOIN db_main.Auto_Pracownik AP ON A.IdAuto = AP.Auto_IdAuto
-        LEFT JOIN db_main.Pracownik P ON AP.Pracownik_IdPracownik = P.IdPracownik
+            LEFT JOIN db_main.Klient K ON A.Klient_IdKlient = K.IdKlient
+            LEFT JOIN db_main.Model M ON A.Model_IdModel = M.IdModel
+            LEFT JOIN db_main.Auto_Pracownik AP ON A.IdAuto = AP.Auto_IdAuto
+            LEFT JOIN db_main.Pracownik P ON AP.Pracownik_IdPracownik = P.IdPracownik
         GROUP BY A.IdAuto, A.Klient_IdKlient
     )
     SELECT DISTINCT A.IdAuto,
@@ -114,16 +109,11 @@ app.get('/Auto/:id',authenticate, authorize((user) => roleGreaterOrEqual(user["r
         A.Klient_nazwa,
         A.Pracownicy,
         A.Dodatkowe_informacje,
-        GROUP_CONCAT(U.Nazwa SEPARATOR ', ') AS Uslugi,
-        IFNULL(SUM(WU.Cena), 0) AS Cena
+        GROUP_CONCAT(U.Nazwa SEPARATOR ', ') AS Uslugi
     FROM A
         LEFT JOIN db_main.Auto_Usluga AU ON A.IdAuto = AU.Auto_IdAuto
         LEFT JOIN db_main.Usluga U ON AU.Usluga_IdUsluga = U.IdUsluga
-        LEFT JOIN db_main.Wersja_umowy WU ON U.IdUsluga = WU.Usluga_IdUsluga
-        LEFT JOIN db_main.Umowa UM ON WU.Umowa_IdUmowa = UM.IdUmowa
-    WHERE (UM.Klient_IdKlient = A.IdKlient AND A.Czas_zakonczenia BETWEEN UM.Data_rozpoczecia AND UM.Data_zakonczenia)
-        OR (A.Czas_zakonczenia IS NULL AND A.Czas_rozpoczecia BETWEEN UM.Data_rozpoczecia AND UM.Data_zakonczenia AND UM.Klient_IdKlient = A.IdKlient)
-        AND A.IdAuto = ?
+    WHERE A.IdAuto = ?
     GROUP BY A.IdAuto, A.IdKlient;`, [autoId]);
    try {
       console.log(results);

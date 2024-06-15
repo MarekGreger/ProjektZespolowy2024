@@ -4,7 +4,7 @@ import { defaultMessage } from "./zodHelpers";
 export const auto_uslugaSchema = z.object(
     {
         Auto_IdAuto: z.number().min(1,"ID auta musi być większe od 0."),
-        Usluga_IdUsluga: z.number().min(1,"ID uslugi musi być większe od 0."),
+        Usluga_IdUsluga: z.number(defaultMessage("Usługa jest wymagana.")).min(1,"ID uslugi musi być większe od 0."),
     },
     defaultMessage("Niepoprawny format")
 );
