@@ -126,6 +126,7 @@ app.patch(
         const user = getUserData(res);
         const zgloszenieId = req.params["id"];
         const zgloszenieData = req.body as Partial<ZgloszeniePayload>; 
+        zgloszenieData.Status = "przesłane";
 
         if(user &&user['role'] === "pracownik")
         {

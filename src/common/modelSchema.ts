@@ -3,8 +3,8 @@ import { defaultMessage } from "./zodHelpers";
 
 export const modelSchema = z.object(
     {
-        Marka: z.string().min(1, "Marka jest wymagana.").default(""),
-        Model: z.string().min(1, "Model jest wymagany.").default(""),
+        Marka: z.string(defaultMessage("Marka jest wymagana.")).min(1, "Marka jest wymagana.").default(""),
+        Model: z.string(defaultMessage("Model jest wymagany.")).min(1, "Model jest wymagany.").default(""),
     },
     defaultMessage("Niepoprawny format")
 );

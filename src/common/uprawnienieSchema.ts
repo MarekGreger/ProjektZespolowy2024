@@ -4,8 +4,8 @@ import { defaultMessage } from "./zodHelpers";
 
 export const uprawnienieSchema = z.object(
     {
-        email: z.string().email().default("Niepoprawny format adresu e-mail"),
-        nazwa: z.string().default(""),
+        email: z.string(defaultMessage("Email jest wymagany.")).email("Niepoprawny format adresu e-mail").default(""),
+        nazwa: z.string(defaultMessage("Nazwa jest wymagana.")).default(""),
         rola: z.enum(roles).default("brak"),
     },
     defaultMessage("niepoprawny format")

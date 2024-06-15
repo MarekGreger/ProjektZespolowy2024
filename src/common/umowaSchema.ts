@@ -3,15 +3,15 @@ import { defaultMessage } from "./zodHelpers";
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
-const dateSchema = z.string().refine((value) => {
+const dateSchema = z.string(defaultMessage("Podanie daty jest wymagane.")).refine((value) => {
     return dateRegex.test(value);
 }, {
-    message: "Nieprawidłowy format daty (oczekiwano 'RRRR-MM-DD')",
+    message: "Nieprawidłowy format daty (oczekiwano 'DD-MM-RRRR').",
 });
 
 export const umowaSchema = z.object(
     {
-        Klient_IdKlient: z.number().min(1,"ID klienta musi być większe od 0."),
+        Klient_IdKlient: z.number(defaultMessage("Klient jest wymagany.")).min(1,"ID klienta musi być większe od 0."),
         Data_rozpoczecia: dateSchema,
         Data_zakonczenia: dateSchema,
     },
