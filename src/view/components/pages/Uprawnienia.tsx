@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import CommonLayout from "../layout/CommonLayout";
-import AddFormButton from "../layout/AddFormButton";
+import FormButton from "../layout/FormButton";
 import { deleteFromEndpoint, patchEndpoint, postToEndpoint } from "../../backendAccess";
 import { uprawnienieSchema } from "../../../common/uprawnienieSchema";
 import FormTextField from "../forms/FormTextField";
@@ -18,7 +18,7 @@ const Uprawnienia: React.FC = () => {
         <CommonLayout subpageTitle="Uprawnienia">
             <Stack alignItems="normal" gap={2}>
                 <div>
-                    <AddFormButton
+                    <FormButton
                         minimalRole="admin"
                         title="Dodaj autoryzowany email"
                         onSubmit={postToEndpoint("/Uprawnienia")}
@@ -27,7 +27,7 @@ const Uprawnienia: React.FC = () => {
                         <FormTextField type="email" name="email" label="E-mail" required />
                         <FormTextField name="nazwa" label="Nazwa" />
                         <FormAutocomplete label="Rola" name="rola" options={roles} />
-                    </AddFormButton>
+                    </FormButton>
                 </div>
                 <DataTable
                     dataEndpoint="/Uprawnienia"

@@ -1,5 +1,8 @@
 import { z } from "zod";
 import { defaultMessage } from "./zodHelpers";
+import { AcceptanceStatus } from "./AcceptanceStatus";
+import dayjs from "dayjs";
+import { DateTimeFormFormat } from "./DateTime";
 
 const datetimeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
 
@@ -16,9 +19,20 @@ export const grafikSchema = z.object(
         Czas_rozpoczecia: datetimeSchema,
         Czas_zakonczenia: datetimeSchema,
         Status: z.enum(["przesłane", "zaakceptowane", "odrzucone"]).default("przesłane"),
+    }
+).refine(
+    (obj) => {
+        const pred = dayjs(obj.Czas_rozpoczecia, DateTimeFormFormat).isBefore(
+            dayjs(obj.Czas_zakonczenia, DateTimeFormFormat)
+        );
+        console.log("refinement", pred)
+        return pred;
     },
-    defaultMessage("Niepoprawny format")
-);
+    {
+        message: "Czas zakończenia nie może być przed czasem rozpoczęcia",
+        path: ["Czas_zakonczenia"],
+    }
+)
 
 export type GrafikPayload = z.infer<typeof grafikSchema>;
 export type Grafik = {
@@ -27,5 +41,8 @@ export type Grafik = {
     Klient_IdKlient: number,
     Czas_rozpoczecia: string,
     Czas_zakonczenia: string,
-    Status: GrafikPayload["Status"]
+    Imie: string,
+    Nazwisko: string,
+    Nazwa: string,
+    Status: AcceptanceStatus
 }

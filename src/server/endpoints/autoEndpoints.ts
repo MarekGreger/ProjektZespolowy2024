@@ -147,7 +147,7 @@ app.patch(
     "/Auto/:id",
     authenticate,
     authorize((user) => roleGreaterOrEqual(user["role"], "pracownik")),
-    validateBody(autoSchema.partial()), 
+    validateBody(autoSchema.innerType().partial()), 
     async (req: Request, res: Response) => {
         const autoId = req.params["id"];
         const autoData = req.body as Partial<AutoPayload>; 

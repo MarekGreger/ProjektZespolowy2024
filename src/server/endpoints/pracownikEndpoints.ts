@@ -81,7 +81,26 @@ app.get('/Pracownik/:email', authenticate, async (req: Request, res: Response) =
     }
 });
 
-app.get('/Pracownik/:email/grafik', authenticate, async (req: Request, res: Response) => {                           //tylko swoje dane
+const getWorkersSchedule = async (id: string| undefined, res: Response) => {
+    try {
+        const [pracownikResult] = await connection.query<RowDataPacket[]>(
+            `SELECT G.IdGrafik, G.Pracownik_IdPracownik, G.Klient_IdKlient, P.Imie, P.Nazwisko, K.Nazwa, G.Czas_rozpoczecia, G.Czas_zakonczenia, G.Status 
+             FROM Grafik G 
+             LEFT JOIN Pracownik P ON G.Pracownik_IdPracownik = P.IdPracownik 
+             LEFT JOIN Klient K ON G.Klient_IdKlient = K.IdKlient 
+             WHERE G.Pracownik_IdPracownik = ?`, [id]
+        );
+
+        return res.json(pracownikResult);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Wystąpił błąd podczas pobierania grafiku pracownika');
+    }
+}
+
+app.get('/Pracownik/:id/grafik', authenticate, authorize("kierownik"), (req, res) => getWorkersSchedule(req.params["id"], res))
+
+app.get('/profil/Pracownik/:email/grafik', authenticate, async (req: Request, res: Response) => {                           //tylko swoje dane
     const emailParam = req.params["email"];
 
     if (!emailParam) {
@@ -108,15 +127,7 @@ app.get('/Pracownik/:email/grafik', authenticate, async (req: Request, res: Resp
 
         const pracownikID = pracownikResults[0]['IdPracownik'];
 
-        const [pracownikResult] = await connection.query<RowDataPacket[]>(
-            `SELECT G.IdGrafik, G.Pracownik_IdPracownik, G.Klient_IdKlient, P.Imie, P.Nazwisko, K.Nazwa, G.Czas_rozpoczecia, G.Czas_zakonczenia, G.Status 
-             FROM Grafik G 
-             LEFT JOIN Pracownik P ON G.Pracownik_IdPracownik = P.IdPracownik 
-             LEFT JOIN Klient K ON G.Klient_IdKlient = K.IdKlient 
-             WHERE G.Pracownik_IdPracownik = ?`, [pracownikID]
-        );
-
-        return res.json(pracownikResult);
+        return await getWorkersSchedule(pracownikID, res);
     } catch (error) {
         console.error(error);
         return res.status(500).send('Wystąpił błąd podczas pobierania grafiku pracownika');
@@ -195,7 +206,7 @@ app.patch(
 app.patch(
     "/Pracownik/:email/Grafik/:id",                                                                //tylko swoj grafik
     authenticate,
-    validateBody(grafikSchema.partial()), 
+    validateBody(grafikSchema.innerType().partial()), 
     async (req: Request, res: Response) => {
         const grafikId = req.params["id"];
         const emailParam = req.params["email"];

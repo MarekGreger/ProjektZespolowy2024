@@ -10,8 +10,8 @@ interface Props extends PropsWithChildren {
 }
 const NavigationListItem: React.FC<Props> = ({ children, href, minimalRole }) => {
     
-    const [_, navigate] = useLocation();
-    const [isActive] = useRoute(href);
+    const [location, navigate] = useLocation();
+    const isActive = location.startsWith(href);
     const activeStyles: SxProps<Theme> = (t) => ({
         color: t.palette.secondary.dark,
         fontWeight: "bolder",

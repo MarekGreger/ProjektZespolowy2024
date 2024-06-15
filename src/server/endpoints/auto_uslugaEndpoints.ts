@@ -42,6 +42,7 @@ app.get('/Auto_usluga',authenticate, authorize((user) => roleGreaterOrEqual(user
     }
 });
 
+//FIXME: endpoint path completely breaking restful
 app.get('/Auto_usluga/auto/:id', authenticate, authorize((user) => roleGreaterOrEqual(user["role"], "pracownik")), async (req: Request, res: Response) => {
     const idAuto = req.params["id"];
 
@@ -50,10 +51,6 @@ app.get('/Auto_usluga/auto/:id', authenticate, authorize((user) => roleGreaterOr
             "SELECT AU.Auto_IdAuto, AU.Usluga_IdUsluga, U.Nazwa, U.Opis FROM Auto_Usluga AU LEFT JOIN Usluga U ON AU.Usluga_IdUsluga = U.IdUsluga WHERE AU.Auto_IdAuto = ?",
             [idAuto]
         );
-
-        if (results.length === 0) {
-            return res.status(200).send(`Nie znaleziono usług dla auta o ID: ${idAuto}`);
-        }
 
         return res.json(results);
     } catch (error) {
@@ -70,10 +67,6 @@ app.get('/Auto_usluga/usluga/:id', authenticate, authorize((user) => roleGreater
             "SELECT AU.Auto_IdAuto, AU.Usluga_IdUsluga, A.Rejestracja, A.Model_IdModel FROM Auto_Usluga AU LEFT JOIN Auto A ON AU.Auto_IdAuto = A.IdAuto WHERE AU.Usluga_IdUsluga = ?",
             [idUslugi]
         );
-
-        if (results.length === 0) {
-            return res.status(200).send(`Nie znaleziono aut powiązanych z usługą o ID: ${idUslugi}`);
-        }
 
         return res.json(results);
     } catch (error) {

@@ -6,6 +6,7 @@ import { GrafikPayload, grafikSchema } from "../../common/grafikSchema";
 import { authenticate, authorize, getUserData } from "../middleware/firebaseAuth";
 import {ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { roleGreaterOrEqual } from "../../common/userRoles";
+import { AcceptanceStatus } from "../../common/AcceptanceStatus";
 
 app.post(
     "/Grafik",
@@ -19,7 +20,7 @@ app.post(
         try {
             const dbConnection = await connection;
             await dbConnection.query("INSERT INTO Grafik ( Pracownik_IdPracownik, Klient_IdKlient, Czas_rozpoczecia, Czas_zakonczenia, Status) VALUES ( ?, ?, ?, ?, ?)",
-             [ grafikData.Pracownik_IdPracownik, grafikData.Klient_IdKlient, grafikData.Czas_rozpoczecia , grafikData.Czas_zakonczenia, grafikData.Status]);
+             [ grafikData.Pracownik_IdPracownik, grafikData.Klient_IdKlient, grafikData.Czas_rozpoczecia , grafikData.Czas_zakonczenia, "przesłane"]);
 
             res.status(200).send("Grafik został dodany pomyślnie");
         } catch (error) {
@@ -101,10 +102,10 @@ app.patch(
     "/Grafik/:id",
     authenticate,
     authorize((user) => roleGreaterOrEqual(user["role"], "kierownik")),
-    validateBody(grafikSchema.partial()), 
+    validateBody(grafikSchema.innerType().partial()), 
     async (req: Request, res: Response) => {
         const grafikId = req.params["id"];
-        const grafikData = req.body as Partial<GrafikPayload>; 
+        const grafikData = req.body as Partial<GrafikPayload> & {Status: AcceptanceStatus}; 
         grafikData.Status = "przesłane";
 
         const updates = [];
@@ -147,7 +148,7 @@ app.put(
 
         try {
             const dbConnection = await connection;
-            await dbConnection.query("UPDATE Grafik SET Status = 'Zaakceptowany' WHERE IdGrafik = ?", [grafikId]);
+            await dbConnection.query("UPDATE Grafik SET Status = 'zaakceptowane' WHERE IdGrafik = ?", [grafikId]);
 
             res.status(200).send("Grafik został zaakceptowany");
         } catch (error) {
@@ -166,7 +167,7 @@ app.delete(
 
         try {
             const dbConnection = await connection;
-            await dbConnection.query("UPDATE Grafik SET Status = 'Odrzucony' WHERE IdGrafik = ?", [grafikId]);
+            await dbConnection.query("UPDATE Grafik SET Status = 'odrzucone' WHERE IdGrafik = ?", [grafikId]);
 
             res.status(200).send("Grafik został odrzucony");
         } catch (error) {
