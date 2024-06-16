@@ -1,0 +1,1 @@
+Projekt zespolowy 2024 kod zrodlowy aplikcaji
